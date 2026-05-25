@@ -20,12 +20,6 @@ if (env('DB_CONNECTION') === 'sqlite' && env('DB_DATABASE') === '/tmp/database.s
             copy($sourceDatabase, '/tmp/database.sqlite');
         } else {
             touch('/tmp/database.sqlite');
-            try {
-                $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
-                $kernel->call('migrate', ['--force' => true]);
-            } catch (\Exception $e) {
-                // Log or handle migration error gracefully
-            }
         }
     }
 }
