@@ -13,6 +13,18 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 // Register the Composer autoloader...
 require __DIR__.'/../vendor/autoload.php';
 
+// Handle dynamic SQLite setup on Vercel cold starts
+if (env('DB_CONNECTION') === 'sqlite' && env('DB_DATABASE') === '/tmp/database.sqlite') {
+    if (!file_exists('/tmp/database.sqlite')) {
+        $sourceDatabase = __DIR__ . '/../database/database.sqlite';
+        if (file_exists($sourceDatabase)) {
+            copy($sourceDatabase, '/tmp/database.sqlite');
+        } else {
+            touch('/tmp/database.sqlite');
+        }
+    }
+}
+
 // Bootstrap Laravel and handle the request...
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
