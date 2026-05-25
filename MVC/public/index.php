@@ -25,8 +25,14 @@ if (env('DB_CONNECTION') === 'sqlite' && env('DB_DATABASE') === '/tmp/database.s
     }
 }
 
-// Bootstrap Laravel and handle the request...
-/** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+try {
+    // Bootstrap Laravel and handle the request...
+    /** @var Application $app */
+    $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+    $app->handleRequest(Request::capture());
+} catch (\Throwable $e) {
+    error_log("CRITICAL BOOTSTRAP EXCEPTION: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+    error_log($e->getTraceAsString());
+    throw $e;
+}
